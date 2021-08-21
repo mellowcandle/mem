@@ -9,6 +9,8 @@
 #include <inttypes.h>
 #include <getopt.h>
 #include <limits.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include "memtool.h"
 static void do_dump_help(FILE *output)
@@ -27,8 +29,9 @@ int do_dump(int argc, char **argv)
 	int squeeze = 1;
 	off_t target;
 	off_t size;
+	bool first = true;
+	bool in_squeeze = false;
 
-	printf("in do dump\n");
 /*
  -C, --canonical           canonical hex+ASCII display
  -v, --no-squeezing        output identical lines
@@ -126,10 +129,20 @@ int do_dump(int argc, char **argv)
 	while (size > 0) {
 		int i;
 
+		if (squeeze && (!first) && ((size - 16) >= 16))
+			if (memcmp(virt_addr, virt_addr + 16, 16) == 0) {
+				if (!in_squeeze) {
+					printf("*\n");
+					in_squeeze = true;
+				}
+				goto proceed;
+			} else
+				in_squeeze = false;
+
 		if (target >= ULONG_MAX)
-			printf("0x%0.16" PRIx64 "  ", target);
+			printf("0x%.16" PRIx64 "  ", target);
 		else
-			printf("0x%0.8" PRIx64 "  ", target);
+			printf("0x%.8" PRIx64 "  ", target);
 		for (i = 0; i < 16; i ++) {
 			if (i == 8)
 				putchar(' ');
@@ -144,8 +157,11 @@ int do_dump(int argc, char **argv)
 			printf("|");
 		}
 		putchar('\n');
-
+proceed:
 		size -= 16;
+		virt_addr += 16;
+		target += 16;
+		first = false;
 	}
 
 	if (munmap(map_base, mapped_size) == -1) {
