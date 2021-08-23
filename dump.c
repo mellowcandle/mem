@@ -15,7 +15,14 @@
 #include "memtool.h"
 static void do_dump_help(FILE *output)
 {
-	printf("Damn\n");
+	fprintf(output, "Usage:\nmemtool dump [options] <address> <length>\n\n");
+	fprintf(output, "Display memory content in hexadecimal format.\n");
+	fprintf(output, "Options:\n");
+	fprintf(output, " -C, --canonical\t\t canonical hex+ASCII display\n");
+	fprintf(output, " -v, --no-squeezing\t output identical lines\n\n");
+	fprintf(output, "Arguments:\n");
+	fprintf(output, " <address> and <length> can be given in decimal, hexedecimal or octal format\n");
+	fprintf(output, " depending of the prefix (no-prefix, 0x, and 0).\n");
 }
 
 int do_dump(int argc, char **argv)
@@ -32,10 +39,6 @@ int do_dump(int argc, char **argv)
 	bool first = true;
 	bool in_squeeze = false;
 
-/*
- -C, --canonical           canonical hex+ASCII display
- -v, --no-squeezing        output identical lines
- */
 	while (1) {
 		static struct option long_options[] =
 		{
@@ -64,29 +67,26 @@ int do_dump(int argc, char **argv)
 			return EXIT_FAILURE;
 		default:
 			fprintf(stderr, "Unsupported option\n");
+			do_dump_help(stderr);
 			return EXIT_FAILURE;
 			break;
 		}
 	};
 	if (argc - optind != 2) {
-		printf("%d\n", argc-optind);
-		TRACE();
+		fprintf(stderr, "Missing address or length\n");
 		do_dump_help(stderr);
 		return EXIT_FAILURE;
 	}
 
 	if (parse_input(argv[optind], &target)) {
-		printf("Herer2\n");
 		do_dump_help(stderr);
 		exit(EXIT_FAILURE);
 	}
-	printf("target: 0x%" PRIX64 "\n", target);
 
 	if (parse_input(argv[optind+1], &size)) {
 		do_dump_help(stderr);
 		exit(EXIT_FAILURE);
 	}
-	printf("size: 0x%" PRIX64 "\n", size);
 
 	/* Get address */
 
@@ -103,7 +103,7 @@ int do_dump(int argc, char **argv)
 	if (size % page_size)
 		page_count++;
 
-	printf("Mapping %d pages\n",page_count);
+//	printf("Mapping %d pages\n",page_count);
 	mapped_size = page_count * page_size;
 	offset_in_page = (unsigned)target & (page_size - 1);
 	if (offset_in_page + size > page_size) {
@@ -111,7 +111,7 @@ int do_dump(int argc, char **argv)
 		 * Must map two pages to make it possible: */
 		mapped_size += getpagesize();
 	}
-	printf("Mapped size: %d\n", mapped_size);
+//	printf("Mapped size: %d\n", mapped_size);
 	map_base = mmap(NULL,
 			mapped_size,
 			PROT_READ,
