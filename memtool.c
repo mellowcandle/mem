@@ -53,11 +53,6 @@ static int do_help(int argc, char **argv)
 	return 0;
 }
 
-
-static int do_load(int argc, char **argv)
-{
-	return 0;
-}
 static int do_compare(int argc, char **argv)
 {
 	return 0;
