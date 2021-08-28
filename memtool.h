@@ -1,6 +1,8 @@
 #ifndef MEMTOOL_H
 #define MEMTOOL_H
 
+#include <sys/types.h>
+
 int do_dump(int argc, char **argv);
 int do_load(int argc, char **argv);
 int do_store(int argc, char **argv);
