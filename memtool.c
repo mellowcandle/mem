@@ -1,11 +1,11 @@
+#include "memtool.h"
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <inttypes.h>
-#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
-#include "memtool.h"
+#include <unistd.h>
 int base_scanf(const char *buf, int base, off_t *value)
 {
 	int ret = 0;
@@ -75,17 +75,9 @@ static int do_checksum(int argc, char **argv)
 static const struct cmd {
 	const char *cmd;
 	int (*func)(int argc, char **argv);
-} cmds[] = {
-	{ "dump", do_dump },
-	{ "load", do_load },
-	{ "store", do_store },
-	{ "compare", do_compare },
-	{ "copy", do_copy },
-	{ "set", do_set },
-	{ "checksum", do_checksum },
-	{ "help", do_help },
-	{ 0 }
-};
+} cmds[] = {{"dump", do_dump},         {"load", do_load}, {"store", do_store},
+	    {"compare", do_compare},   {"copy", do_copy}, {"set", do_set},
+	    {"checksum", do_checksum}, {"help", do_help}, {0}};
 
 static int do_cmd(int argc, char **argv)
 {
@@ -107,6 +99,5 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	return do_cmd(argc-1, argv+1);
-
+	return do_cmd(argc - 1, argv + 1);
 }

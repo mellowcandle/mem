@@ -1,16 +1,16 @@
+#include <ctype.h>
+#include <fcntl.h>
+#include <getopt.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <fcntl.h>
+#include <string.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <sys/mman.h>
-#include <ctype.h>
-#include <inttypes.h>
-#include <getopt.h>
-#include <limits.h>
-#include <string.h>
-#include <stdbool.h>
 
 #include "memtool.h"
 static void do_dump_help(FILE *output)
@@ -40,16 +40,14 @@ int do_dump(int argc, char **argv)
 	bool in_squeeze = false;
 
 	while (1) {
-		static struct option long_options[] =
-		{
-			{"canonical",		no_argument,       0, 'C'},
-			{"no-squeezing",	no_argument,	   0, 'v'},
-			{0, 0, 0, 0}
+		static struct option long_options[] = {
+		    {"canonical", no_argument, 0, 'C'},
+		    {"no-squeezing", no_argument, 0, 'v'},
+		    {0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "Cv",
-				 long_options, &option_index);
+		c = getopt_long(argc, argv, "Cv", long_options, &option_index);
 
 		/* Detect the end of the options. */
 		if (c == -1)
@@ -63,7 +61,7 @@ int do_dump(int argc, char **argv)
 			squeeze = 0;
 			break;
 		case '?':
-	  /* getopt_long already printed an error message. */
+			/* getopt_long already printed an error message. */
 			return EXIT_FAILURE;
 		default:
 			fprintf(stderr, "Unsupported option\n");
@@ -83,13 +81,12 @@ int do_dump(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	if (parse_input(argv[optind+1], &size)) {
+	if (parse_input(argv[optind + 1], &size)) {
 		do_dump_help(stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	/* Get address */
-
 
 	page_size = getpagesize();
 
@@ -103,7 +100,7 @@ int do_dump(int argc, char **argv)
 	if (size % page_size)
 		page_count++;
 
-//	printf("Mapping %d pages\n",page_count);
+	//	printf("Mapping %d pages\n",page_count);
 	mapped_size = page_count * page_size;
 	offset_in_page = (unsigned)target & (page_size - 1);
 	if (offset_in_page + size > page_size) {
@@ -111,19 +108,14 @@ int do_dump(int argc, char **argv)
 		 * Must map two pages to make it possible: */
 		mapped_size += getpagesize();
 	}
-//	printf("Mapped size: %d\n", mapped_size);
-	map_base = mmap(NULL,
-			mapped_size,
-			PROT_READ,
-			MAP_SHARED,
-			fd,
-			target & ~(off_t)(page_size - 1));
+	//	printf("Mapped size: %d\n", mapped_size);
+	map_base = mmap(NULL, mapped_size, PROT_READ, MAP_SHARED, fd, target & ~(off_t)(page_size - 1));
 	if (map_base == MAP_FAILED) {
 		perror("Failed to map /dev/mem to memory\n");
 		exit(EXIT_FAILURE);
 	}
 
-	virt_addr = (char*)map_base + offset_in_page;
+	virt_addr = (char *)map_base + offset_in_page;
 
 	// Do the magic here
 	while (size > 0) {
@@ -143,15 +135,15 @@ int do_dump(int argc, char **argv)
 			printf("0x%.16" PRIx64 "  ", target);
 		else
 			printf("0x%.8" PRIx64 "  ", target);
-		for (i = 0; i < 16; i ++) {
+		for (i = 0; i < 16; i++) {
 			if (i == 8)
 				putchar(' ');
-			printf("%02x ", *(volatile uint8_t*)(virt_addr + i));
+			printf("%02x ", *(volatile uint8_t *)(virt_addr + i));
 		}
 		if (canonical) {
 			printf(" |");
-			for (i = 0; i < 16 && (size - i) > 0; i ++) {
-				char c = *(volatile uint8_t*)(virt_addr + i);
+			for (i = 0; i < 16 && (size - i) > 0; i++) {
+				char c = *(volatile uint8_t *)(virt_addr + i);
 				printf("%c", isgraph(c) ? 'c' : '.');
 			}
 			printf("|");
@@ -172,4 +164,3 @@ proceed:
 
 	return EXIT_SUCCESS;
 }
-
