@@ -18,7 +18,8 @@ static void do_dump_help(FILE *output)
 	fprintf(output, "Usage:\nmemtool dump [options] <address> <length>\n\n");
 	fprintf(output, "Display memory content in hexadecimal format.\n");
 	fprintf(output, "Options:\n");
-	fprintf(output, " -C, --canonical\t\t canonical hex+ASCII display\n");
+	fprintf(output, " -m, --mem-dev\t\t memory device to use (default is /dev/mem)\n");
+	fprintf(output, " -C, --canonical\t canonical hex+ASCII display\n");
 	fprintf(output, " -v, --no-squeezing\t output identical lines\n\n");
 	fprintf(output, "Arguments:\n");
 	fprintf(output, " <address> and <length> can be given in decimal, hexedecimal or octal format\n");
@@ -38,22 +39,27 @@ int do_dump(int argc, char **argv)
 	off_t size;
 	bool first = true;
 	bool in_squeeze = false;
+	char *memdev = "/dev/mem";
 
 	while (1) {
 		static struct option long_options[] = {
+		    {"mem-dev", required_argument, 0, 'm'},
 		    {"canonical", no_argument, 0, 'C'},
 		    {"no-squeezing", no_argument, 0, 'v'},
 		    {0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "Cv", long_options, &option_index);
+		c = getopt_long(argc, argv, "m:Cv", long_options, &option_index);
 
 		/* Detect the end of the options. */
 		if (c == -1)
 			break;
 
 		switch (c) {
+		case 'm':
+			memdev = optarg;
+			break;
 		case 'C':
 			canonical = 1;
 			break;
@@ -90,9 +96,9 @@ int do_dump(int argc, char **argv)
 
 	page_size = getpagesize();
 
-	fd = open("/dev/mem", O_RDONLY | O_SYNC);
+	fd = open(memdev, O_RDONLY | O_SYNC);
 	if (!fd) {
-		perror("Can't open /dev/mem");
+		perror("Can't open memory device");
 		exit(EXIT_FAILURE);
 	}
 
@@ -109,9 +115,10 @@ int do_dump(int argc, char **argv)
 		mapped_size += getpagesize();
 	}
 	//	printf("Mapped size: %d\n", mapped_size);
+
 	map_base = mmap(NULL, mapped_size, PROT_READ, MAP_SHARED, fd, target & ~(off_t)(page_size - 1));
 	if (map_base == MAP_FAILED) {
-		perror("Failed to map /dev/mem to memory\n");
+		perror("Failed to map memory device to memory\n");
 		exit(EXIT_FAILURE);
 	}
 

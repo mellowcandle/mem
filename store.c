@@ -18,6 +18,7 @@ static void do_store_help(FILE *output)
 	fprintf(output, "Usage:\nmemtool store [options] <address> <length> <output_file>\n\n");
 	fprintf(output, "Store memory content in output file.\n");
 	fprintf(output, "Options:\n");
+	fprintf(output, " -m, --mem-dev\t\t memory device to use (default is /dev/mem)\n");
 	fprintf(output, "Arguments:\n");
 	fprintf(output, " <address> and <length> can be given in decimal, hexedecimal or octal format\n");
 	fprintf(output, " depending of the prefix (no-prefix, 0x, and 0).\n");
@@ -33,18 +34,26 @@ int do_store(int argc, char **argv)
 	off_t target;
 	off_t size;
 	int out_fd;
+	char *memdev = "/dev/mem";
 
 	while (1) {
-		static struct option long_options[] = {{0, 0, 0, 0}};
+		static struct option long_options[] = {
+		    {"mem-dev", required_argument, 0, 'm'},
+		    {0, 0, 0, 0}
+		};
+
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "", long_options, &option_index);
+		c = getopt_long(argc, argv, "m:", long_options, &option_index);
 
 		/* Detect the end of the options. */
 		if (c == -1)
 			break;
 
 		switch (c) {
+		case 'm':
+			memdev = optarg;
+			break;
 		case '?':
 			/* getopt_long already printed an error message. */
 			return EXIT_FAILURE;
@@ -80,9 +89,9 @@ int do_store(int argc, char **argv)
 
 	page_size = getpagesize();
 
-	fd = open("/dev/mem", O_RDONLY | O_SYNC);
+	fd = open(memdev, O_RDONLY | O_SYNC);
 	if (fd == -1) {
-		perror("Can't open /dev/mem");
+		perror("Can't open memory device");
 		exit(EXIT_FAILURE);
 	}
 
@@ -99,7 +108,7 @@ int do_store(int argc, char **argv)
 	}
 	map_base = mmap(NULL, mapped_size, PROT_READ, MAP_SHARED, fd, target & ~(off_t)(page_size - 1));
 	if (map_base == MAP_FAILED) {
-		perror("Failed to map /dev/mem to memory\n");
+		perror("Failed to map memory device to memory\n");
 		exit(EXIT_FAILURE);
 	}
 

@@ -74,10 +74,16 @@ static int do_checksum(int argc, char **argv)
 
 static const struct cmd {
 	const char *cmd;
-	int (*func)(int argc, char **argv);
-} cmds[] = {{"dump", do_dump},         {"load", do_load}, {"store", do_store},
-	    {"compare", do_compare},   {"copy", do_copy}, {"set", do_set},
-	    {"checksum", do_checksum}, {"help", do_help}, {0}};
+	int (*func)(int argc, char **argv); 
+	} cmds[] = {
+		{"dump", do_dump},
+		{"load", do_load},
+		{"store", do_store},
+		{"compare", do_compare},
+		{"copy", do_copy},
+		{"set", do_set},
+		{"checksum", do_checksum},
+		{"help", do_help}, {0}};
 
 static int do_cmd(int argc, char **argv)
 {
