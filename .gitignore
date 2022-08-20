@@ -51,7 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 mem
-
+config.h
 # http://www.gnu.org/software/automake
 
 Makefile.in
