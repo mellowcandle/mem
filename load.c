@@ -13,10 +13,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "memtool.h"
+#include "mem.h"
+
 static void do_load_help(FILE *output)
 {
-	fprintf(output, "Usage:\nmemtool load [options] <address> <input_file>\n\n");
+	fprintf(output, "Usage:\nmem load [options] <address> <input_file>\n\n");
 	fprintf(output, "load memory content in output file.\n");
 	fprintf(output, "Options:\n");
 	fprintf(output, " -m, --mem-dev\t\t memory device to use (default is /dev/mem)\n");

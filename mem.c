@@ -1,4 +1,4 @@
-#include "memtool.h"
+#include "mem.h"
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+
 int base_scanf(const char *buf, int base, off_t *value)
 {
 	int ret = 0;
@@ -94,7 +95,7 @@ static int do_cmd(int argc, char **argv)
 			return (c->func(argc, argv));
 	}
 
-	fprintf(stderr, "Subcommand \"%s\" is unknown, try \"memtool help\".\n", argv[0]);
+	fprintf(stderr, "Subcommand \"%s\" is unknown, try \"mem help\".\n", argv[0]);
 	return EXIT_FAILURE;
 }
 

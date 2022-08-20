@@ -12,10 +12,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "memtool.h"
+#include "mem.h"
+
 static void do_store_help(FILE *output)
 {
-	fprintf(output, "Usage:\nmemtool store [options] <address> <length> <output_file>\n\n");
+	fprintf(output, "Usage:\nmem store [options] <address> <length> <output_file>\n\n");
 	fprintf(output, "Store memory content in output file.\n");
 	fprintf(output, "Options:\n");
 	fprintf(output, " -m, --mem-dev\t\t memory device to use (default is /dev/mem)\n");
@@ -81,7 +82,7 @@ int do_store(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	out_fd = open(argv[optind + 2], O_WRONLY | O_CREAT);
+	out_fd = open(argv[optind + 2], O_WRONLY | O_CREAT, 0644);
 	if (out_fd == -1) {
 		perror("Can't open file for output");
 		exit(EXIT_FAILURE);

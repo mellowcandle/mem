@@ -12,7 +12,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "memtool.h"
+#include "mem.h"
+
 static void do_dump_help(FILE *output)
 {
 	fprintf(output, "Usage:\nmemtool dump [options] <address> <length>\n\n");
