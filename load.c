@@ -109,7 +109,7 @@ int do_load(int argc, char **argv)
 	}
 	map_base = mmap(NULL, mapped_size, PROT_WRITE, MAP_SHARED, fd, target & ~(off_t)(page_size - 1));
 	if (map_base == MAP_FAILED) {
-		perror("Failed to map memory edvice to memory\n");
+		perror("Failed to map memory edvice to memory");
 		exit(EXIT_FAILURE);
 	}
 
