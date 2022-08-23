@@ -136,15 +136,17 @@ int do_dump(int argc, char **argv)
 	while (size > 0) {
 		int i;
 
-		if (squeeze && (!first) && ((size - 16) >= 16))
+		if (squeeze && (!first) && ((size - 16) >= 16)) {
 			if (memcmp(virt_addr, virt_addr + 16, 16) == 0) {
 				if (!in_squeeze) {
 					printf("*\n");
 					in_squeeze = true;
 				}
 				goto proceed;
-			} else
+			} else {
 				in_squeeze = false;
+			}
+		}
 
 		if (target >= ULONG_MAX)
 			printf("0x%.16" PRIx64 "  ", target);
