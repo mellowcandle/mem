@@ -16,12 +16,13 @@
 
 static void do_dump_help(FILE *output)
 {
-	fprintf(output, "Usage:\nmemtool dump [options] <address> <length>\n\n");
+	fprintf(output, "Usage:\nmem dump [options] <address> <length>\n\n");
 	fprintf(output, "Display memory content in hexadecimal format.\n");
 	fprintf(output, "Options:\n");
 	fprintf(output, " -m, --mem-dev\t\t memory device to use (default is /dev/mem)\n");
 	fprintf(output, " -C, --canonical\t canonical hex+ASCII display\n");
 	fprintf(output, " -v, --no-squeezing\t output identical lines\n\n");
+	fprintf(output, " -h, --help\t\t Display this help screen\n");
 	fprintf(output, "Arguments:\n");
 	fprintf(output, " <address> and <length> can be given in decimal, hexedecimal or octal format\n");
 	fprintf(output, " depending of the prefix (no-prefix, 0x, and 0).\n");
@@ -43,15 +44,18 @@ int do_dump(int argc, char **argv)
 	char *memdev = "/dev/mem";
 
 	while (1) {
+		// clang-format off
 		static struct option long_options[] = {
-		    {"mem-dev", required_argument, 0, 'm'},
+			{"mem-dev", required_argument, 0, 'm'},
 		    {"canonical", no_argument, 0, 'C'},
 		    {"no-squeezing", no_argument, 0, 'v'},
+		    {"help", no_argument, 0, 'h'},
 		    {0, 0, 0, 0}
 		};
+		// clang-format on
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "m:Cv", long_options, &option_index);
+		c = getopt_long(argc, argv, "m:Cvh", long_options, &option_index);
 
 		/* Detect the end of the options. */
 		if (c == -1)
@@ -67,6 +71,9 @@ int do_dump(int argc, char **argv)
 		case 'v':
 			squeeze = 0;
 			break;
+		case 'h':
+			do_dump_help(stdout);
+			return EXIT_SUCCESS;
 		case '?':
 			/* getopt_long already printed an error message. */
 			return EXIT_FAILURE;
