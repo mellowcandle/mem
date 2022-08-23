@@ -13,6 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: make
-      run: make
+    - name: Build
+      run: ./bootstrap.sh && ./configure && make
 
