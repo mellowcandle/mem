@@ -95,7 +95,7 @@ int do_dump(int argc, char **argv)
 
 	/* Get address */
 
-	page_size = getpagesize();
+	page_size = sysconf(_SC_PAGESIZE);
 
 	fd = open(memdev, O_RDONLY | O_SYNC);
 	if (!fd) {
@@ -113,7 +113,7 @@ int do_dump(int argc, char **argv)
 	if (offset_in_page + size > page_size) {
 		/* This access spans pages.
 		 * Must map two pages to make it possible: */
-		mapped_size += getpagesize();
+		mapped_size += sysconf(_SC_PAGESIZE);
 	}
 	//	printf("Mapped size: %d\n", mapped_size);
 

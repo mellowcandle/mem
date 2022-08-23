@@ -88,7 +88,7 @@ int do_store(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	page_size = getpagesize();
+	page_size = sysconf(_SC_PAGESIZE);
 
 	fd = open(memdev, O_RDONLY | O_SYNC);
 	if (fd == -1) {
@@ -105,7 +105,7 @@ int do_store(int argc, char **argv)
 	if (offset_in_page + size > page_size) {
 		/* This access spans pages.
 		 * Must map two pages to make it possible: */
-		mapped_size += getpagesize();
+		mapped_size += sysconf(_SC_PAGESIZE);
 	}
 	map_base = mmap(NULL, mapped_size, PROT_READ, MAP_SHARED, fd, target & ~(off_t)(page_size - 1));
 	if (map_base == MAP_FAILED) {
