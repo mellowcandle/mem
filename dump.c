@@ -161,7 +161,7 @@ int do_dump(int argc, char **argv)
 			printf(" |");
 			for (i = 0; i < 16 && (size - i) > 0; i++) {
 				char c = *(volatile uint8_t *)(virt_addr + i);
-				printf("%c", isgraph(c) ? 'c' : '.');
+				printf("%c", isgraph(c) ? c : '.');
 			}
 			printf("|");
 		}
