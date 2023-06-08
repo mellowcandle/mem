@@ -179,6 +179,8 @@ int do_dump(int argc, char **argv)
 		} else {
 				for (i = 0; i < size; i++) {
 					char c = *(volatile uint8_t *)(virt_addr + i);
+					if (c == '\0')
+							break;
 					if (isascii(c))
 							putchar(c);
 					else
