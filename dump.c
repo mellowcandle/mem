@@ -32,11 +32,8 @@ static void do_dump_help(FILE *output)
 int do_dump(int argc, char **argv)
 {
 	int c;
-	unsigned page_size, mapped_size, offset_in_page;
-	void *map_base, *virt_addr;
-	int fd;
-	int page_count;
 	int canonical = 0;
+	void *virt_addr;
 	int ascii = 0;
 	int squeeze = 1;
 	off_t target;
@@ -44,7 +41,7 @@ int do_dump(int argc, char **argv)
 	bool first = true;
 	bool in_squeeze = false;
 	char *memdev = "/dev/mem";
-
+	struct mapped_mem mem;
 	while (1) {
 		// clang-format off
 		static struct option long_options[] = {
@@ -112,35 +109,10 @@ int do_dump(int argc, char **argv)
 	}
 	/* Get address */
 
-	page_size = sysconf(_SC_PAGESIZE);
-
-	fd = open(memdev, O_RDONLY | O_SYNC);
-	if (!fd) {
-		perror("Can't open memory device");
+	if (map_memory(memdev, size, PROT_READ, target, &mem))
 		exit(EXIT_FAILURE);
-	}
 
-	page_count = size / page_size;
-	if (size % page_size)
-		page_count++;
-
-	//	printf("Mapping %d pages\n",page_count);
-	mapped_size = page_count * page_size;
-	offset_in_page = (unsigned)target & (page_size - 1);
-	if (offset_in_page + size > page_size) {
-		/* This access spans pages.
-		 * Must map two pages to make it possible: */
-		mapped_size += sysconf(_SC_PAGESIZE);
-	}
-	//	printf("Mapped size: %d\n", mapped_size);
-
-	map_base = mmap(NULL, mapped_size, PROT_READ, MAP_SHARED, fd, target & ~(off_t)(page_size - 1));
-	if (map_base == MAP_FAILED) {
-		perror("Failed to map memory device to memory");
-		exit(EXIT_FAILURE);
-	}
-
-	virt_addr = (char *)map_base + offset_in_page;
+	virt_addr = mem.v_ptr;
 
 	// Do the magic here
 	while (size > 0) {
@@ -198,11 +170,7 @@ proceed:
 	}
 exit1:
 
-	if (munmap(map_base, mapped_size) == -1) {
-		perror("Can't unmap memory");
-		exit(EXIT_FAILURE);
-	}
-	close(fd);
+	unmap_memory(&mem);
 
 	return EXIT_SUCCESS;
 }
