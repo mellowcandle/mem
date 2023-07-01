@@ -7,6 +7,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
+
+
 int base_scanf(const char *buf, int base, off_t *value)
 {
 	int ret = 0;
@@ -49,11 +52,6 @@ int parse_input(const char *input, off_t *val)
 	return base_scanf(input, base, val);
 }
 
-static int do_help(int argc, char **argv)
-{
-	return 0;
-}
-
 static int do_compare(int argc, char **argv)
 {
 	return 0;
@@ -73,6 +71,8 @@ static int do_checksum(int argc, char **argv)
 	return 0;
 }
 
+static int do_help(int argc, char **argv);
+
 static const struct cmd {
 	const char *cmd;
 	int (*func)(int argc, char **argv); 
@@ -85,6 +85,17 @@ static const struct cmd {
 		{"set", do_set},
 		{"checksum", do_checksum},
 		{"help", do_help}, {0}};
+
+static int do_help(int argc, char **argv)
+{
+	printf("Usage:\nmem [cmd] ...\n\n");
+	printf("Available commands:\n");
+	for (int i = 0; i < (ARRAY_LENGTH(cmds)) - 1; i++)
+			printf("\t%s\n", cmds[i].cmd);
+
+	printf("Use mem [cmd] --help for information about each command\n");
+	return 0;
+}
 
 static int do_cmd(int argc, char **argv)
 {
