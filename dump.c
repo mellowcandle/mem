@@ -21,7 +21,7 @@ static void do_dump_help(FILE *output)
 	fprintf(output, "Options:\n");
 	fprintf(output, " -m, --mem-dev\t\t memory device to use (default is /dev/mem)\n");
 	fprintf(output, " -C, --canonical\t canonical hex+ASCII display\n");
-	fprintf(output, " -a, --ascii\t ASCII display\n");
+	fprintf(output, " -a, --ascii\t\t ASCII display\n");
 	fprintf(output, " -v, --no-squeezing\t output identical lines\n\n");
 	fprintf(output, " -h, --help\t\t Display this help screen\n");
 	fprintf(output, "Arguments:\n");
