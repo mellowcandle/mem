@@ -17,9 +17,19 @@ int map_memory(char *memdev, off_t size, int props, off_t target, struct mapped_
 	unsigned page_size, mapped_size, offset_in_page;
 	int page_count;
 	int fd;
+	int oflags;
 	page_size = sysconf(_SC_PAGESIZE);
 
-	fd = open(memdev, O_RDONLY | O_SYNC);
+	if ((props && PROT_WRITE) && !(props && PROT_READ))
+			oflags = O_WRONLY;
+	else if ((props && PROT_READ) && !(props && PROT_WRITE))
+		oflags = O_RDONLY;
+	else if (props && (PROT_WRITE | PROT_READ))
+		oflags = O_RDWR;
+	else
+		return -1;
+
+	fd = open(memdev, oflags | O_SYNC);
 	if (!fd) {
 		perror("Can't open memory device");
 		return -1;
@@ -59,5 +69,5 @@ void unmap_memory(struct mapped_mem *mem)
 		return;
 	if (munmap(mem->base, mem->mapped_size) == -1) {
 		perror("Can't unmap memory");
-	}
+	 }
 }

@@ -52,15 +52,6 @@ int parse_input(const char *input, off_t *val)
 	return base_scanf(input, base, val);
 }
 
-static int do_compare(int argc, char **argv)
-{
-	return 0;
-}
-static int do_copy(int argc, char **argv)
-{
-	return 0;
-}
-
 static int do_set(int argc, char **argv)
 {
 	return 0;

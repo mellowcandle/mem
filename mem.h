@@ -10,6 +10,8 @@ struct mapped_mem {
 };
 
 int do_dump(int argc, char **argv);
+int do_copy(int argc, char **argv);
+int do_compare(int argc, char **argv);
 int do_load(int argc, char **argv);
 int do_store(int argc, char **argv);
 int parse_input(const char *input, off_t *val);
