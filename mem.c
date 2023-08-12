@@ -57,11 +57,6 @@ static int do_set(int argc, char **argv)
 	return 0;
 }
 
-static int do_checksum(int argc, char **argv)
-{
-	return 0;
-}
-
 static int do_help(int argc, char **argv);
 
 static const struct cmd {
@@ -74,7 +69,6 @@ static const struct cmd {
 		{"compare", do_compare},
 		{"copy", do_copy},
 		{"set", do_set},
-		{"checksum", do_checksum},
 		{"help", do_help}, {0}};
 
 static int do_help(int argc, char **argv)
