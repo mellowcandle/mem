@@ -9,7 +9,6 @@
 
 #define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
 
-
 int base_scanf(const char *buf, int base, off_t *value)
 {
 	int ret = 0;
@@ -59,6 +58,7 @@ static int do_set(int argc, char **argv)
 
 static int do_help(int argc, char **argv);
 
+// clang-format off
 static const struct cmd {
 	const char *cmd;
 	int (*func)(int argc, char **argv); 
@@ -69,14 +69,17 @@ static const struct cmd {
 		{"compare", do_compare},
 		{"copy", do_copy},
 		{"set", do_set},
-		{"help", do_help}, {0}};
+		{"help", do_help},
+		{0}
+	};
+// clang-format on
 
 static int do_help(int argc, char **argv)
 {
 	printf("Usage:\nmem [cmd] ...\n\n");
 	printf("Available commands:\n");
 	for (int i = 0; i < (ARRAY_LENGTH(cmds)) - 1; i++)
-			printf("\t%s\n", cmds[i].cmd);
+		printf("\t%s\n", cmds[i].cmd);
 
 	printf("Use mem [cmd] --help for information about each command\n");
 	return 0;

@@ -95,7 +95,6 @@ int do_store(int argc, char **argv)
 	if (map_memory(memdev, size, PROT_READ, target, &mem))
 		exit(EXIT_FAILURE);
 
-
 	if (write(out_fd, mem.v_ptr, size) != size) {
 		perror("Failed writing memory content to file");
 		return EXIT_FAILURE;

@@ -95,7 +95,6 @@ int do_copy(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-
 	if (map_memory(memdev, size, PROT_READ, source, &src_mem))
 		exit(EXIT_FAILURE);
 
@@ -109,5 +108,3 @@ int do_copy(int argc, char **argv)
 
 	return EXIT_SUCCESS;
 }
-
-

@@ -119,47 +119,47 @@ int do_dump(int argc, char **argv)
 		int i;
 
 		if (!ascii) {
-				if (squeeze && (!first) && ((size - 16) >= 16)) {
-					if (memcmp(virt_addr, virt_addr + 16, 16) == 0) {
-						if (!in_squeeze) {
-							printf("*\n");
-							in_squeeze = true;
-						}
-						goto proceed;
-					} else {
-						in_squeeze = false;
+			if (squeeze && (!first) && ((size - 16) >= 16)) {
+				if (memcmp(virt_addr, virt_addr + 16, 16) == 0) {
+					if (!in_squeeze) {
+						printf("*\n");
+						in_squeeze = true;
 					}
+					goto proceed;
+				} else {
+					in_squeeze = false;
 				}
+			}
 
-				if (target >= ULONG_MAX)
-					printf("0x%.16" PRIx64 "  ", target);
-				else
-					printf("0x%.8" PRIx64 "  ", target);
-				for (i = 0; i < 16; i++) {
-					if (i == 8)
-						putchar(' ');
-					printf("%02x ", *(volatile uint8_t *)(virt_addr + i));
-				}
-				if (canonical) {
-					printf(" |");
-					for (i = 0; i < 16 && (size - i) > 0; i++) {
-						char c = *(volatile uint8_t *)(virt_addr + i);
-						printf("%c", isgraph(c) ? c : '.');
-					}
-					printf("|");
-				}
-		} else {
-				for (i = 0; i < size; i++) {
+			if (target >= ULONG_MAX)
+				printf("0x%.16" PRIx64 "  ", target);
+			else
+				printf("0x%.8" PRIx64 "  ", target);
+			for (i = 0; i < 16; i++) {
+				if (i == 8)
+					putchar(' ');
+				printf("%02x ", *(volatile uint8_t *)(virt_addr + i));
+			}
+			if (canonical) {
+				printf(" |");
+				for (i = 0; i < 16 && (size - i) > 0; i++) {
 					char c = *(volatile uint8_t *)(virt_addr + i);
-					if (c == '\0')
-							break;
-					if (isascii(c))
-							putchar(c);
-					else
-							putchar('.');
+					printf("%c", isgraph(c) ? c : '.');
 				}
-				putchar('\n');
-				goto exit1;
+				printf("|");
+			}
+		} else {
+			for (i = 0; i < size; i++) {
+				char c = *(volatile uint8_t *)(virt_addr + i);
+				if (c == '\0')
+					break;
+				if (isascii(c))
+					putchar(c);
+				else
+					putchar('.');
+			}
+			putchar('\n');
+			goto exit1;
 		}
 		putchar('\n');
 proceed:

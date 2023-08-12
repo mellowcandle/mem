@@ -21,7 +21,7 @@ int map_memory(char *memdev, off_t size, int props, off_t target, struct mapped_
 	page_size = sysconf(_SC_PAGESIZE);
 
 	if ((props && PROT_WRITE) && !(props && PROT_READ))
-			oflags = O_WRONLY;
+		oflags = O_WRONLY;
 	else if ((props && PROT_READ) && !(props && PROT_WRITE))
 		oflags = O_RDONLY;
 	else if (props && (PROT_WRITE | PROT_READ))
@@ -69,5 +69,5 @@ void unmap_memory(struct mapped_mem *mem)
 		return;
 	if (munmap(mem->base, mem->mapped_size) == -1) {
 		perror("Can't unmap memory");
-	 }
+	}
 }

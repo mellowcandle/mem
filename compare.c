@@ -95,7 +95,6 @@ int do_compare(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-
 	if (map_memory(memdev, size, PROT_READ, source, &src_mem))
 		exit(EXIT_FAILURE);
 
@@ -107,10 +106,8 @@ int do_compare(int argc, char **argv)
 	if (rc)
 		printf("The memory contents differ !\n");
 
-
 	unmap_memory(&src_mem);
 	unmap_memory(&dst_mem);
 
 	return rc;
 }
-
