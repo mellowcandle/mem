@@ -51,24 +51,19 @@ int parse_input(const char *input, off_t *val)
 	return base_scanf(input, base, val);
 }
 
-static int do_set(int argc, char **argv)
-{
-	return 0;
-}
-
 static int do_help(int argc, char **argv);
 
 // clang-format off
 static const struct cmd {
 	const char *cmd;
-	int (*func)(int argc, char **argv); 
+	int (*func)(int argc, char **argv);
 	} cmds[] = {
+		{"devmem", do_devmem},
 		{"dump", do_dump},
 		{"load", do_load},
 		{"store", do_store},
 		{"compare", do_compare},
 		{"copy", do_copy},
-		{"set", do_set},
 		{"help", do_help},
 		{0}
 	};
